@@ -1,3 +1,4 @@
+import platform
 from os import mkdir
 from os.path import abspath, basename, exists, expanduser, getsize, join
 from shutil import move, rmtree
@@ -10,10 +11,10 @@ from images import compress_images
 
 console = Console()
 
-cache_folder = expanduser("~/Library/Caches/compress-office/")
+cache_folder = expanduser("~/Library/Caches/compress-office/") if platform.system() == "Darwin" else expanduser("~/.cache/compress-office/")
 
 
-def convert_size(size_in_byte: int) -> str:
+def convert_size(size_in_byte: float) -> str:
     units = ("B", "KB", "MB", "GB")
     for unit in units:
         if size_in_byte < 1024:
@@ -43,7 +44,7 @@ def compress(file_path: str, workers: int | None = None) -> Tuple:
 
     with console.status("[bold green]Packing Document..."):
         run(
-            ["zip", file_name, "-r", "."],
+            ["zip", "-r", file_name, "."],
             stdout=DEVNULL,
             cwd=cache_folder,
         ).check_returncode()
@@ -53,7 +54,7 @@ def compress(file_path: str, workers: int | None = None) -> Tuple:
         return (before_size, before_size)
 
     run(
-        ["trash", file_path],
+        ["trash", file_path] if platform.system() == "Darwin" else ["gio", "trash", file_path],
     ).check_returncode()
     move(new_file_path, file_path)
 

@@ -4,7 +4,7 @@ from os.path import getsize, join, splitext
 from subprocess import DEVNULL, run
 
 from rich.console import Console as RichConsole
-from rich.progress import BarColumn, Progress, TaskProgressColumn, TextColumn
+from rich.progress import BarColumn, Progress, TaskID, TaskProgressColumn, TextColumn
 from rich.theme import Theme
 
 _plain_console = RichConsole(
@@ -68,7 +68,7 @@ _IMAGE_EXTS = set(_COMPRESSION_CHAINS.keys())
 _WORKERS = min(4, os.cpu_count() or 4)
 
 
-def _format_size(size_in_byte: int) -> str:
+def _format_size(size_in_byte: float) -> str:
     units = ("B", "KB", "MB", "GB")
     for unit in units:
         if size_in_byte < 1024:
@@ -98,7 +98,7 @@ def compress_images(folder: str, workers: int | None = None) -> tuple[int, int, 
         TextColumn("{task.fields[result]}"),
         console=_plain_console,
     ) as progress:
-        tasks: dict[str, int] = {}
+        tasks: dict[str, TaskID] = {}
         for fp in images:
             name = os.path.basename(fp)
             ext = splitext(fp)[1].lower()
