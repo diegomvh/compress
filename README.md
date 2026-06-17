@@ -1,8 +1,8 @@
-# Compress Office 
+# Compress Documents 
 
 English | [中文](README_ZH_CN.md)
 
-A simple tool that losslessly compresses images in docx/pptx/xlsx documents.
+A simple tool that losslessly compresses images in Office documents (docx/pptx/xlsx) and PDF files.
 
 ![screenshot](screenshot/example.gif)
 
@@ -42,7 +42,7 @@ uv sync
 ## Usage
 
 ```
-uv run python compress_office.py [OPTIONS] PATH [PATH ...]
+uv run python compress.py [OPTIONS] PATH [PATH ...]
 ```
 
 ### Options
@@ -56,17 +56,17 @@ uv run python compress_office.py [OPTIONS] PATH [PATH ...]
 ### Examples
 
 ```bash
-# Compress all Office files in a directory
-uv run python compress_office.py ~/Documents
+# Compress all Office and PDF files in a directory
+uv run python compress.py ~/Documents
 
 # Compress specific files
-uv run python compress_office.py report.docx slides.pptx
+uv run python compress.py report.docx slides.pptx document.pdf
 
 # Use 2 parallel workers
-uv run python compress_office.py -w 2 ~/Documents
+uv run python compress.py -w 2 ~/Documents
 
 # Sequential (no parallelism)
-uv run python compress_office.py --no-parallel ~/Documents
+uv run python compress.py --no-parallel ~/Documents
 ```
 
 When the program runs for the first time, it will create a file called `process_history.csv`, which records the path of the compressed file and its modify time. When running again, if program finds that the file has not changed (file path is in the history and its modify time is same as recorded), then the program will skip the file without re-compressing, because doing so is not meaningful. If you really need to recompress a file, just delete its record from csv file.
@@ -91,7 +91,9 @@ Yes. This tool uses standard command-line tools (optipng, jpegoptim, gifsicle, t
 
 ### Q2: How does this tool compress images? Will it corrupt my documents?
 
-The docx/pptx/xlsx document is essentially a zip compressed package. This tool extracts the document to a cache directory, compresses all PNG/JPEG/GIF images losslessly using optipng, jpegoptim, and gifsicle, then repacks everything back.
+Office documents (docx/pptx/xlsx) are essentially zip compressed packages. This tool extracts the document to a cache directory, compresses all PNG/JPEG/GIF images losslessly using optipng, jpegoptim, and gifsicle, then repacks everything back.
+
+PDF files are compressed using Ghostscript's pdfwrite device and pypdf to optimize internal streams and remove duplicate objects — all without losing quality.
 
 Therefore, **in theory**, using this tool will not corrupt files when compressing, but in order to prevent unpredictable bugs, it is recommended to backup files before compressing them. At the same time, this tool will move the original document to the recycle bin after compression, and if you find a problem, you can restore the original file from the recycle bin.
 
@@ -109,6 +111,8 @@ Built with these great open source tools:
 - [jpegoptim](https://github.com/tjko/jpegoptim) — JPEG optimizer
 - [jpegtran](https://ijg.org/) — JPEG transformation
 - [gifsicle](https://www.lcdf.org/gifsicle/) — GIF optimizer
+- [ghostscript](https://ghostscript.com/) — PDF compression
+- [pypdf](https://github.com/py-pdf/pypdf) — PDF stream optimization
 - [rich](https://github.com/Textualize/rich) — Terminal UI
 - [uv](https://docs.astral.sh/uv/) — Python package manager
 - [vhs](https://github.com/charmbracelet/vhs) — Terminal recording (demo)

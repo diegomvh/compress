@@ -1,8 +1,8 @@
-# Compress Office 
+# Compress Documents 
 
 [English](README.md) | 中文
 
-无损压缩 docx/pptx/xlsx 等文档中的图片，减小文档体积。
+无损压缩 docx/pptx/xlsx 等文档及 PDF 文件中的图片，减小文件体积。
 
 ![screenshot](screenshot/example.gif)
 
@@ -23,13 +23,14 @@ git clone https://github.com/cometeme/compress-office.git
 5. **jpegoptim**: https://github.com/tjko/jpegoptim （JPEG 无损优化）
 6. **jpeg**: https://ijg.org/ （提供 jpegtran，用于 JPEG Huffman 表优化）
 7. **gifsicle**: https://www.lcdf.org/gifsicle/ （GIF 无损优化）
-8. **trash**: https://github.com/ali-rantakari/trash
-9. **fd**（可选，加快文件查找速度）: https://github.com/sharkdp/fd
+8. **ghostscript**: https://ghostscript.com/ （PDF 压缩工具）
+9. **trash**: https://github.com/ali-rantakari/trash
+10. **fd**（可选，加快文件查找速度）: https://github.com/sharkdp/fd
 
 如果你使用 Homebrew，运行以下指令安装依赖：
 
 ```
-brew install uv optipng zopfli pngcrush jpegoptim jpeg gifsicle trash
+brew install uv optipng zopfli pngcrush jpegoptim jpeg gifsicle ghostscript trash
 ```
 
 然后使用 uv 安装 Python 依赖：
@@ -41,7 +42,7 @@ uv sync
 ## 使用教程
 
 ```
-uv run python compress_office.py [选项] 路径 [路径 ...]
+uv run python compress.py [选项] 路径 [路径 ...]
 ```
 
 ### 选项
@@ -55,17 +56,17 @@ uv run python compress_office.py [选项] 路径 [路径 ...]
 ### 示例
 
 ```bash
-# 压缩目录中所有 Office 文件
-uv run python compress_office.py ~/Documents
+# 压缩目录中所有 Office 和 PDF 文件
+uv run python compress.py ~/Documents
 
 # 压缩指定文件
-uv run python compress_office.py report.docx slides.pptx
+uv run python compress.py report.docx slides.pptx document.pdf
 
 # 使用 2 个并行线程
-uv run python compress_office.py -w 2 ~/Documents
+uv run python compress.py -w 2 ~/Documents
 
 # 顺序执行（无并行）
-uv run python compress_office.py --no-parallel ~/Documents
+uv run python compress.py --no-parallel ~/Documents
 ```
 
 第一次运行时，程序会创建一个叫 `process_history.csv` 的文件，其中记录了已经被压缩的文件的路径以及其修改时间。当再次运行时，如果程序发现文件没有改变（这个文件在历史记录中，并且它的修改时间与记录的相同），那么它会直接跳过这个文件，而不会重新进行压缩，因为重新压缩是没有意义的。如果你真的需要重新压缩某个文件，从 csv 文件中删除对应文件的记录即可。
@@ -92,6 +93,8 @@ uv run python compress_office.py --no-parallel ~/Documents
 
 docx/pptx/xlsx 文档本质上就是一个 zip 压缩包，其中的资源都被打包在一起。本程序会将用户输入的文档逐个解压至一个缓存目录中，使用 optipng、jpegoptim、gifsicle 等工具无损压缩缓存目录中的所有图片，再将其重新打包，放回原处。
 
+PDF 文件则使用 Ghostscript 的 pdfwrite 设备和 pypdf 来优化内部数据流并移除重复对象，同样保持无损。
+
 因此，用本程序压缩文档**理论上**不会造成文档损坏，但是为了预防不可预知的 bug，建议您在使用前对文档进行备份。同时，本程序会在压缩后将原始文档移至回收站中，如果发现问题可以从回收站还原原文件。
 
 ## 致谢
@@ -106,6 +109,8 @@ docx/pptx/xlsx 文档本质上就是一个 zip 压缩包，其中的资源都被
 - [jpegoptim](https://github.com/tjko/jpegoptim) — JPEG 优化器
 - [jpegtran](https://ijg.org/) — JPEG 变换
 - [gifsicle](https://www.lcdf.org/gifsicle/) — GIF 优化器
+- [ghostscript](https://ghostscript.com/) — PDF 压缩
+- [pypdf](https://github.com/py-pdf/pypdf) — PDF 数据流优化
 - [rich](https://github.com/Textualize/rich) — 终端界面
 - [uv](https://docs.astral.sh/uv/) — Python 包管理器
 - [vhs](https://github.com/charmbracelet/vhs) — 终端录制（演示）
