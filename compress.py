@@ -5,11 +5,12 @@ import sys
 from rich.console import Console
 
 from history import history
-from office import compress, convert_size
-from walk import find_files
+from office import compress as compress_office
+from pdf import compress as compress_pdf
+from utils import find_files, convert_size
 
 console = Console(highlighter=None)
-EXTS = ("docx", "pptx", "xlsx")
+EXTS = ("docx", "pptx", "xlsx", "pdf")
 
 
 def main() -> None:
@@ -69,7 +70,8 @@ def main() -> None:
     try:
         for i, file_path in enumerate(file_paths, start=1):
             print(f"[{i}/{file_cnt}] Processing {file_path}")
-            result = compress(file_path, workers=workers)
+            result = compress_pdf(file_path, workers=workers) if file_path.split(".")[-1] == "pdf" \
+                else compress_office(file_path, workers=workers)
             his.add_history(file_path)
             before_size_sum += result[0]
             after_size_sum += result[1]

@@ -41,3 +41,12 @@ def find_files(paths: list[str], exts: tuple[str, ...]) -> list[str]:
                         result.append(file_path)
 
     return result
+
+
+def convert_size(size_in_byte: float) -> str:
+    units = ("B", "KB", "MB", "GB")
+    for unit in units:
+        if size_in_byte < 1024:
+            return f"{round(size_in_byte, 2)}{unit}"
+        size_in_byte /= 1024
+    return f"{round(size_in_byte, 2)}TB"

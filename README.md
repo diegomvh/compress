@@ -23,13 +23,14 @@ Then we need:
 5. **jpegoptim**: https://github.com/tjko/jpegoptim (JPEG lossless optimization)
 6. **jpeg**: https://ijg.org/ (provides jpegtran for JPEG Huffman table optimization)
 7. **gifsicle**: https://www.lcdf.org/gifsicle/ (GIF lossless optimization)
-8. **trash**: https://github.com/ali-rantakari/trash
-9. **fd** (Optional, speeds up file search): https://github.com/sharkdp/fd
+8. **ghostscript**: https://ghostscript.com/ (PDF Conversion Tool)
+9. **trash**: https://github.com/ali-rantakari/trash
+10. **fd** (Optional, speeds up file search): https://github.com/sharkdp/fd
 
 If you have Homebrew, run these commands to install dependencies:
 
 ```
-brew install uv optipng zopfli pngcrush jpegoptim jpeg gifsicle trash
+brew install uv optipng zopfli pngcrush jpegoptim jpeg gifsicle ghostscript trash
 ```
 
 Then install Python dependencies with uv:

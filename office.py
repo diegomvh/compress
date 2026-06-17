@@ -7,20 +7,12 @@ from typing import Tuple
 
 from rich.console import Console
 
+from utils import convert_size
 from images import compress_images
 
 console = Console()
 
 cache_folder = expanduser("~/Library/Caches/compress-office/") if platform.system() == "Darwin" else expanduser("~/.cache/compress-office/")
-
-
-def convert_size(size_in_byte: float) -> str:
-    units = ("B", "KB", "MB", "GB")
-    for unit in units:
-        if size_in_byte < 1024:
-            return f"{round(size_in_byte, 2)}{unit}"
-        size_in_byte /= 1024
-    return f"{round(size_in_byte, 2)}TB"
 
 
 def compress(file_path: str, workers: int | None = None) -> Tuple:
