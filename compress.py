@@ -7,10 +7,11 @@ from rich.console import Console
 from history import history
 from office import compress as compress_office
 from pdf import compress as compress_pdf
+from images import _IMAGE_EXTS, compress_image
 from utils import find_files, convert_size
 
 console = Console(highlighter=None)
-EXTS = ("docx", "pptx", "xlsx", "pdf")
+EXTS = (".docx", ".pptx", ".xlsx") + (".pdf", ) + tuple(_IMAGE_EXTS)
 
 
 def main() -> None:
@@ -70,8 +71,13 @@ def main() -> None:
     try:
         for i, file_path in enumerate(file_paths, start=1):
             print(f"[{i}/{file_cnt}] Processing {file_path}")
-            result = compress_pdf(file_path, workers=workers) if file_path.split(".")[-1] == "pdf" \
-                else compress_office(file_path, workers=workers)
+            ext = os.path.splitext(file_path)[1].lower()
+            if ext == ".pdf":
+                result = compress_pdf(file_path, workers=workers)
+            elif ext in _IMAGE_EXTS:
+                result = compress_image(file_path, workers=workers)
+            else: 
+                result = compress_office(file_path, workers=workers)
             his.add_history(file_path)
             before_size_sum += result[0]
             after_size_sum += result[1]

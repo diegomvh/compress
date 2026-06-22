@@ -1,5 +1,5 @@
 from glob import glob
-from os.path import abspath, exists, isfile, join
+from os.path import abspath, splitext, exists, isfile, join
 from shlex import quote
 from subprocess import DEVNULL, PIPE, run
 
@@ -20,7 +20,7 @@ def find_files(paths: list[str], exts: tuple[str, ...]) -> list[str]:
         path = abspath(path)
 
         if isfile(path):
-            if path.split(".")[-1] not in exts:
+            if splitext(path) not in exts:
                 console.print(
                     f"Error: {path} is not a supported file.", style="bold red"
                 )
@@ -37,7 +37,7 @@ def find_files(paths: list[str], exts: tuple[str, ...]) -> list[str]:
                     result.append(file_path)
             else:
                 for ext in exts:
-                    for file_path in glob(join(path, "**", f"*.{ext}"), recursive=True):
+                    for file_path in glob(join(path, "**", f"*{ext}"), recursive=True):
                         result.append(file_path)
 
     return result

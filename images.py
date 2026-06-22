@@ -77,14 +77,7 @@ def _format_size(size_in_byte: float) -> str:
     return f"{round(size_in_byte, 2)}TB"
 
 
-def compress_images(folder: str, workers: int | None = None) -> tuple[int, int, int]:
-    images: list[str] = []
-    for root, _dirs, files in os.walk(folder):
-        for f in files:
-            ext = splitext(f)[1].lower()
-            if ext in _IMAGE_EXTS:
-                images.append(join(root, f))
-
+def _compress_images(images: list[str], workers: int | None = None) -> tuple[int, int, int]:
     if not images:
         return (0, 0, 0)
 
@@ -153,3 +146,18 @@ def compress_images(folder: str, workers: int | None = None) -> tuple[int, int, 
         total_after = sum(r[1] for r in results)
 
     return (len(images), total_before, total_after)
+
+
+def compress_images(folder: str, workers: int | None = None) -> tuple[int, int, int]:
+    images: list[str] = []
+    for root, _dirs, files in os.walk(folder):
+        for f in files:
+            ext = splitext(f)[1].lower()
+            if ext in _IMAGE_EXTS:
+                images.append(join(root, f))
+
+    return _compress_images(images, workers)
+
+
+def compress_image(file_path: str, workers: int | None = None) -> tuple[int, int]:
+    return _compress_images([file_path], workers)[1:]
