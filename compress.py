@@ -16,7 +16,7 @@ EXTS = (".docx", ".pptx", ".xlsx") + (".pdf", ) + tuple(_IMAGE_EXTS)
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Losslessly compress images in Office documents (docx/pptx/xlsx)."
+        description="Losslessly compress images in Office documents (docx/pptx/xlsx), PDF files, and standalone images."
     )
     parser.add_argument(
         "paths",

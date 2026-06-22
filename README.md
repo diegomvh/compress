@@ -2,7 +2,7 @@
 
 English | [中文](README_ZH_CN.md)
 
-A simple tool that losslessly compresses images in Office documents (docx/pptx/xlsx) and PDF files.
+A simple tool that losslessly compresses images in Office documents (docx/pptx/xlsx), PDF files, and standalone image files (PNG/JPEG/GIF).
 
 ![screenshot](screenshot/example.gif)
 
@@ -56,11 +56,11 @@ uv run python compress.py [OPTIONS] PATH [PATH ...]
 ### Examples
 
 ```bash
-# Compress all Office and PDF files in a directory
+# Compress all supported files in a directory
 uv run python compress.py ~/Documents
 
-# Compress specific files
-uv run python compress.py report.docx slides.pptx document.pdf
+# Compress specific files (including standalone images)
+uv run python compress.py report.docx slides.pptx document.pdf image.png photo.jpg
 
 # Use 2 parallel workers
 uv run python compress.py -w 2 ~/Documents
@@ -94,6 +94,8 @@ Yes. This tool uses standard command-line tools (optipng, jpegoptim, gifsicle, t
 Office documents (docx/pptx/xlsx) are essentially zip compressed packages. This tool extracts the document to a cache directory, compresses all PNG/JPEG/GIF images losslessly using optipng, jpegoptim, and gifsicle, then repacks everything back.
 
 PDF files are compressed using Ghostscript's pdfwrite device and pypdf to optimize internal streams and remove duplicate objects — all without losing quality.
+
+Standalone image files (PNG/JPEG/GIF) are compressed directly in place using the same lossless compression tools.
 
 Therefore, **in theory**, using this tool will not corrupt files when compressing, but in order to prevent unpredictable bugs, it is recommended to backup files before compressing them. At the same time, this tool will move the original document to the recycle bin after compression, and if you find a problem, you can restore the original file from the recycle bin.
 

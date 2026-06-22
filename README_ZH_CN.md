@@ -2,7 +2,7 @@
 
 [English](README.md) | 中文
 
-无损压缩 docx/pptx/xlsx 等文档及 PDF 文件中的图片，减小文件体积。
+无损压缩 docx/pptx/xlsx 等文档、PDF 文件及独立图片文件（PNG/JPEG/GIF）中的图片，减小文件体积。
 
 ![screenshot](screenshot/example.gif)
 
@@ -56,11 +56,11 @@ uv run python compress.py [选项] 路径 [路径 ...]
 ### 示例
 
 ```bash
-# 压缩目录中所有 Office 和 PDF 文件
+# 压缩目录中所有支持的文件
 uv run python compress.py ~/Documents
 
-# 压缩指定文件
-uv run python compress.py report.docx slides.pptx document.pdf
+# 压缩指定文件（包括独立图片）
+uv run python compress.py report.docx slides.pptx document.pdf image.png photo.jpg
 
 # 使用 2 个并行线程
 uv run python compress.py -w 2 ~/Documents
@@ -94,6 +94,8 @@ uv run python compress.py --no-parallel ~/Documents
 docx/pptx/xlsx 文档本质上就是一个 zip 压缩包，其中的资源都被打包在一起。本程序会将用户输入的文档逐个解压至一个缓存目录中，使用 optipng、jpegoptim、gifsicle 等工具无损压缩缓存目录中的所有图片，再将其重新打包，放回原处。
 
 PDF 文件则使用 Ghostscript 的 pdfwrite 设备和 pypdf 来优化内部数据流并移除重复对象，同样保持无损。
+
+独立的图片文件（PNG/JPEG/GIF）则直接使用相同的无损压缩工具原地压缩。
 
 因此，用本程序压缩文档**理论上**不会造成文档损坏，但是为了预防不可预知的 bug，建议您在使用前对文档进行备份。同时，本程序会在压缩后将原始文档移至回收站中，如果发现问题可以从回收站还原原文件。
 
